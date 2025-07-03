@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://daj2h1j2m5800"]
+
+[ext_resource type="Script" uid="uid://d4ngyyws870kn" path="res://Scripts/globals/globals.gd" id="2_8gbba"]
+[ext_resource type="Script" uid="uid://hphfnjdctkm0" path="res://Scripts/grid_controller.gd" id="2_bo1nx"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="grid_controller" type="Node2D" parent="."]
+position = Vector2(576, 314)
+script = ExtResource("2_bo1nx")
+tile_size = 80
+
+[node name="line_renderer" type="Line2D" parent="grid_controller"]
+z_index = 1
+width = 20.0
+default_color = Color(0.101961, 0.6, 0, 1)
+round_precision = 10
+antialiased = true
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("2_8gbba")

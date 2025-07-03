@@ -1,0 +1,42 @@
+[gd_scene load_steps=8 format=3 uid="uid://cemlj3oklnk2d"]
+
+[ext_resource type="Script" uid="uid://dqvt54eqx3jac" path="res://Scripts/clickable_tile.gd" id="1_gw3ct"]
+[ext_resource type="Shader" uid="uid://b0k34mumt4en2" path="res://Shaders/sprite_tint.tres" id="2_ao0fi"]
+[ext_resource type="Texture2D" uid="uid://dkuma8yjkxmlf" path="res://Sprites/rounded_square.png" id="3_pvnxa"]
+[ext_resource type="Texture2D" uid="uid://d13fqw7s0oo7u" path="res://Sprites/apel.png" id="4_eh02y"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bo1nx"]
+shader = ExtResource("2_ao0fi")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jjvhh"]
+shader = ExtResource("2_ao0fi")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jjvhh"]
+size = Vector2(368.502, 355.612)
+
+[node name="clickable_tile" type="Node2D"]
+script = ExtResource("1_gw3ct")
+
+[node name="bg" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_bo1nx")
+instance_shader_parameters/main_tint = Color(0.501961, 0.501961, 0.501961, 1)
+texture = ExtResource("3_pvnxa")
+
+[node name="foreground" type="Sprite2D" parent="bg"]
+material = SubResource("ShaderMaterial_jjvhh")
+instance_shader_parameters/main_tint = Color(1, 1, 1, 1)
+scale = Vector2(0.885159, 0.885159)
+texture = ExtResource("3_pvnxa")
+
+[node name="main_sprite" type="Sprite2D" parent="."]
+scale = Vector2(0.761995, 0.761995)
+texture = ExtResource("4_eh02y")
+
+[node name="ItemArea" type="Area2D" parent="."]
+
+[node name="square_area" type="CollisionShape2D" parent="ItemArea"]
+position = Vector2(0.75824, -2.65384)
+shape = SubResource("RectangleShape2D_jjvhh")
+
+[connection signal="input_event" from="ItemArea" to="." method="_on_item_area_input_event"]
+[connection signal="mouse_entered" from="ItemArea" to="." method="_on_item_area_mouse_entered"]
