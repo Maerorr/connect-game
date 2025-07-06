@@ -4,7 +4,7 @@ signal map_loaded(loaded_map_size: Vector2i, loaded_map_data: Array[int])
 
 @export var map_file_path: String = "res://Maps/test_map.txt"
 var map_size: Vector2i = Vector2i.ZERO
-var map_data: Array[int] = []
+var map_data: Array[Globals.TILE_TYPE] = []
 
 func _ready():
 	load_map_from_txt()
@@ -34,6 +34,8 @@ func load_map_from_txt():
 						map_data.append(Globals.TILE_TYPE.PEAR)
 					'E':
 						map_data.append(Globals.TILE_TYPE.EMPTY)
+					'C':
+						map_data.append(Globals.TILE_TYPE.CHARACTER)
 					_:
 						print("Unknown tile type: ", c)
 	file.close()

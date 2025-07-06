@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://daj2h1j2m5800"]
+[gd_scene load_steps=6 format=3 uid="uid://daj2h1j2m5800"]
 
 [ext_resource type="Script" uid="uid://d4ngyyws870kn" path="res://Scripts/globals/globals.gd" id="2_8gbba"]
+[ext_resource type="Script" uid="uid://fstsemk4f8q0" path="res://Scripts/character.gd" id="2_21xkr"]
 [ext_resource type="Script" uid="uid://hphfnjdctkm0" path="res://Scripts/grid_controller.gd" id="2_bo1nx"]
 [ext_resource type="Script" uid="uid://cveo53w881hv5" path="res://Scripts/map_loader.gd" id="2_jjvhh"]
+[ext_resource type="Texture2D" uid="uid://c7bn460ronj0n" path="res://Sprites/character.png" id="2_kry3j"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -10,6 +12,15 @@
 position = Vector2(576, 314)
 script = ExtResource("2_bo1nx")
 tile_size = 80
+
+[node name="character" type="Node2D" parent="grid_controller"]
+z_index = 2
+position = Vector2(0, -1)
+script = ExtResource("2_21xkr")
+
+[node name="Sprite2D" type="Sprite2D" parent="grid_controller/character"]
+scale = Vector2(0.117188, 0.117188)
+texture = ExtResource("2_kry3j")
 
 [node name="line_renderer" type="Line2D" parent="grid_controller"]
 z_index = 1

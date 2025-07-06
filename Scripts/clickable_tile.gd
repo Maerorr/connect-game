@@ -2,7 +2,20 @@ class_name ClickableTile extends Node2D
 
 var grid: GridController = null
 var position_in_grid: Vector2i = Vector2i.ZERO
-var tile_type = Globals.TILE_TYPE.EMPTY
+var tile_type = Globals.TILE_TYPE.EMPTY:
+	set(new_type):
+		match new_type as Globals.TILE_TYPE:
+			Globals.TILE_TYPE.APPLE:
+				sprite_node.texture = Globals.apple_sprite
+			Globals.TILE_TYPE.PEAR:
+				sprite_node.texture = Globals.pear_sprite
+			Globals.TILE_TYPE.OBSTACLE:
+				sprite_node.texture = Globals.obstacle_sprite
+			Globals.TILE_TYPE.CHARACTER:
+				sprite_node.texture = null # character is outside of the tile
+			Globals.TILE_TYPE.EMPTY:
+				sprite_node.texture = null
+		tile_type = new_type
 
 @onready var sprite_node: Sprite2D = $main_sprite
 
@@ -32,18 +45,3 @@ func set_position_in_grid(xy_idx: Vector2i):
 
 func _on_item_area_mouse_entered():
 	tile_hovered.emit(self)
-
-# set the tile type. 
-# This will also change the sprite texture based on the tile type.
-func set_type(new_tile_type: int):
-	var tile_type_enum = new_tile_type as Globals.TILE_TYPE
-	match tile_type_enum as Globals.TILE_TYPE:
-		Globals.TILE_TYPE.APPLE:
-			sprite_node.texture = Globals.apple_sprite
-		Globals.TILE_TYPE.PEAR:
-			sprite_node.texture = Globals.pear_sprite
-		Globals.TILE_TYPE.OBSTACLE:
-			sprite_node.texture = Globals.obstacle_sprite
-		Globals.TILE_TYPE.EMPTY:
-			sprite_node.texture = null
-	self.tile_type = tile_type_enum
