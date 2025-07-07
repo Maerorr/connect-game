@@ -60,7 +60,7 @@ func _process(_delta: float) -> void:
 		if Input.is_action_just_released("left_click"):
 			print("Selection ended, total selected tiles: ", selected_tiles.size())
 			selecting = false
-			character.move(selected_tiles)
+			#character.move(selected_tiles)
 
 func get_tile(xy_idx: Vector2i) -> ClickableTile:
 	if xy_idx.x < 0 or xy_idx.x >= map_size.x or xy_idx.y < 0 or xy_idx.y >= map_size.y:
@@ -88,7 +88,7 @@ func can_start_selection(tile: ClickableTile) -> bool:
 		return false
 	if tile.tile_type == Globals.TILE_TYPE.OBSTACLE or tile.tile_type == Globals.TILE_TYPE.EMPTY:
 		return false
-	if selected_tiles.has(tile):
+	if selected_tiles.size() > 0:
 		return false
 	if Globals.distance_between(character_tile, tile) > 1:
 		return false
@@ -120,3 +120,16 @@ func _on_character_whole_move_completed() -> void:
 	line_renderer.clear_points()
 	selecting = false
 	print("Character has completed the move, selection cleared.")
+
+func _on_move_button_pressed() -> void:
+	if selected_tiles.size() == 0:
+		print("No tiles selected for movement.")
+		return
+	character.move(selected_tiles)
+	selecting = false
+	print("Character move initiated with ", selected_tiles.size(), " tiles.")
+
+func _on_reset_button_pressed() -> void:
+	selected_tiles.clear()
+	line_renderer.clear_points()
+	selecting = false

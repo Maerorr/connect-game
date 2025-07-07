@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://cda8vpj0x3l6u"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="start_button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 908.0
+offset_top = 220.0
+offset_right = 980.845
+offset_bottom = 261.21
+text = "Start"
+
+[node name="reset_button" type="Button" parent="."]
+offset_left = 908.0
+offset_top = 283.0
+offset_right = 980.845
+offset_bottom = 324.21
+text = "Reset"
