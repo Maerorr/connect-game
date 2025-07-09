@@ -1,59 +1,43 @@
 class_name GridController extends Node2D
 
-# create a container for the clickable tiles
+# THIS CLASS IS THE TOP-MOST MANAGER FOR THE GRID. IT IS RESPONSIBLE FOR CREATION OF THE GRID.
+# IT ONLY STORES THE BACKGROUND TILES.
+# FOR ACCESS TO THE TILE OBJECTS, USE THE MAP OBJECTS MANAGER.
+
 var clickable_tiles = []
 # @export var grid_size: Vector2i = Vector2i(5, 5)
 var map_size: Vector2i = Vector2i.ZERO
-@export var tile_size: int = 64
-@export var tile_spacing: int = 10
-var tile_prefab: PackedScene = preload("res://Prefabs/clickable_tile.tscn")
+var background_tile_prefab: PackedScene = preload("res://Prefabs/bg_tile.tscn")
+var tile_prefab: PackedScene = preload("res://Prefabs/tile_object.tscn")
 
 var selected_tiles: Array[ClickableTile] = []
 var map_data: Array[Globals.TILE_TYPE] = []
 var selecting: bool = false
 var character_tile: ClickableTile = null
+
 @onready var character: Character = $character
 @onready var line_renderer: Line2D = get_node("line_renderer")
+@onready var map_object_manager: MapObjectsManager = $map_objects_manager
 var currently_selecting_type: Globals.TILE_TYPE = Globals.TILE_TYPE.EMPTY
 
+
 func _ready():
-	character.move_completed.connect(_on_character_move_completed)
-	character.whole_move_completed.connect(_on_character_whole_move_completed)
+	#character.move_completed.connect(_on_character_move_completed)
+	#character.whole_move_completed.connect(_on_character_whole_move_completed)
+	# position itself in the center of the screen
+	global_position = get_viewport_rect().size / 2.0
+	Globals.character = character
+
 
 func _on_map_loader_map_loaded(loaded_map_size: Vector2i, loaded_map_data: Array[Globals.TILE_TYPE]) -> void:
-	map_size = loaded_map_size
+	Globals.map_size = loaded_map_size
 	map_data = loaded_map_data
-
-	var spacing_offset: Vector2 = Vector2.ZERO
-	spacing_offset = tile_spacing * (map_size - Vector2i.ONE) / 2.0
-
-	var offset: Vector2 = (map_size * tile_size) / 2.0 + spacing_offset
-	# position itself in the center of the screen
-	position = get_viewport_rect().size / 2.0
-	for x in range(map_size.x):
-		for y in range(map_size.y):
-			var tile_instance: ClickableTile = tile_prefab.instantiate()
-			call_deferred("setup_tile", tile_instance, x, y, offset)
+	setup_tiles(loaded_map_data)
 	
-func setup_tile(tile_instance: ClickableTile, x: int, y: int, offset: Vector2) -> void:
-	add_child(tile_instance)
-	tile_instance.position = Vector2(
-		x * (tile_size + tile_spacing),
-		y * (tile_size + tile_spacing)
-	) - offset + Vector2(tile_size / 2.0, tile_size / 2.0)
-	var size = tile_instance.get_size();
-	tile_instance.scale = Vector2(tile_size / size.x, tile_size / size.y)
-	tile_instance.set_position_in_grid(Vector2i(x, y))
-	tile_instance.set_grid(self)
-	tile_instance.tile_type = map_data[y + x * map_size.y] as Globals.TILE_TYPE
-	# connect signals
-	tile_instance.tile_clicked.connect(on_tile_clicked)
-	tile_instance.tile_hovered.connect(on_tile_hovered)
-	clickable_tiles.append(tile_instance)
-	if tile_instance.tile_type == Globals.TILE_TYPE.CHARACTER:
-		character_tile = tile_instance
-		character.current_tile = tile_instance
-		print("Character tile found at position: ", tile_instance.position_in_grid)
+
+func setup_tiles(loaded_map_data: Array[Globals.TILE_TYPE]):
+	map_object_manager.setup_map(loaded_map_data)
+
 
 func _process(_delta: float) -> void:
 	if selecting:
@@ -62,10 +46,12 @@ func _process(_delta: float) -> void:
 			selecting = false
 			#character.move(selected_tiles)
 
+
 func get_tile(xy_idx: Vector2i) -> ClickableTile:
 	if xy_idx.x < 0 or xy_idx.x >= map_size.x or xy_idx.y < 0 or xy_idx.y >= map_size.y:
 		return null
 	return clickable_tiles[xy_idx.y + xy_idx.x * map_size.y]
+
 
 func on_tile_clicked(tile: ClickableTile):
 	var xy_idx: Vector2i = tile.position_in_grid
@@ -78,10 +64,12 @@ func on_tile_clicked(tile: ClickableTile):
 		line_renderer.add_point(tile.position)
 	selecting = true
 
+
 func on_tile_hovered(tile: ClickableTile):
 	if selecting:
 		next_tile_selection_logic(tile)
 		return
+
 
 func can_start_selection(tile: ClickableTile) -> bool:
 	if selecting:
@@ -90,16 +78,16 @@ func can_start_selection(tile: ClickableTile) -> bool:
 		return false
 	if selected_tiles.size() > 0:
 		return false
-	if Globals.distance_between(character_tile, tile) > 1:
+	if Globals.distance_between_chebyshev(character_tile, tile) > 1:
 		return false
 	return true
 
+
 func next_tile_selection_logic(next_tile: ClickableTile):
 	var prev_tile: ClickableTile = selected_tiles[-1]
-	# if floor is > 1 then its more than 1 tile away
-	if floor(prev_tile.position_in_grid.distance_to(next_tile.position_in_grid)) > 1:
+	if Globals.distance_between_chebyshev(prev_tile, next_tile) > 1:
 		return
-	
+		
 	if next_tile.tile_type == Globals.TILE_TYPE.OBSTACLE or next_tile.tile_type == Globals.TILE_TYPE.EMPTY:
 		return
 
@@ -111,25 +99,3 @@ func next_tile_selection_logic(next_tile: ClickableTile):
 
 	selected_tiles.append(next_tile)
 	line_renderer.add_point(next_tile.position)
-
-func _on_character_move_completed(current_tile: ClickableTile) -> void:
-	current_tile.tile_type = Globals.TILE_TYPE.EMPTY
-
-func _on_character_whole_move_completed() -> void:
-	selected_tiles.clear()
-	line_renderer.clear_points()
-	selecting = false
-	print("Character has completed the move, selection cleared.")
-
-func _on_move_button_pressed() -> void:
-	if selected_tiles.size() == 0:
-		print("No tiles selected for movement.")
-		return
-	character.move(selected_tiles)
-	selecting = false
-	print("Character move initiated with ", selected_tiles.size(), " tiles.")
-
-func _on_reset_button_pressed() -> void:
-	selected_tiles.clear()
-	line_renderer.clear_points()
-	selecting = false

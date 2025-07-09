@@ -7,9 +7,11 @@ var map_size: Vector2i = Vector2i.ZERO
 var map_data: Array[Globals.TILE_TYPE] = []
 
 func _ready():
-	load_map_from_txt()
+	call_deferred("load_map_from_txt")
+	
 
 func load_map_from_txt():
+	print("load map from file")
 	var file = FileAccess.open("res://Maps/test_map.txt", FileAccess.READ)
 	if file == null:
 		print("Failed to open map file.")

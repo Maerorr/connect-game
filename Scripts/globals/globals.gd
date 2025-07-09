@@ -9,8 +9,23 @@ enum TILE_TYPE {APPLE, PEAR, OBSTACLE, CHARACTER, EMPTY}
 @export var obstacle_sprite: Texture2D = preload("res://Sprites/stone.png")
 @export var character_sprite: Texture2D = preload("res://Sprites/character.png")
 
+## GLOBAL VARIABLES
+@export var tile_size: int = 64
+@export var tile_spacing: int = 10
+@export var falling_speed: float = 0.15 # time for a tile to move one tile of distance
+var map_size: Vector2i
+var offset: Vector2
+var character: Character = null
+
+
 ## HELPER FUNCTIONS
 # returns chebyshev distance between two tiles (meaning, 8 nearest neighbours are considered as distance of 1)
-func distance_between(tile_a: ClickableTile, tile_b: ClickableTile) -> int:
+func distance_between_chebyshev(tile_a: ClickableTile, tile_b: ClickableTile) -> int:
 	# chebyshev distance
 	return max(abs(tile_a.position_in_grid.x - tile_b.position_in_grid.x), abs(tile_a.position_in_grid.y - tile_b.position_in_grid.y))
+
+func grid_position_world(x: int, y: int) -> Vector2:
+	return Vector2(
+		x * (tile_size + tile_spacing),
+		y * (tile_size + tile_spacing)
+	) - offset + Vector2(tile_size / 2.0, tile_size / 2.0)

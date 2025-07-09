@@ -2,6 +2,7 @@ class_name ClickableTile extends Node2D
 
 var grid: GridController = null
 var position_in_grid: Vector2i = Vector2i.ZERO
+var size_px: int = 64
 var tile_type = Globals.TILE_TYPE.EMPTY:
 	set(new_type):
 		match new_type as Globals.TILE_TYPE:
@@ -22,13 +23,15 @@ var tile_type = Globals.TILE_TYPE.EMPTY:
 signal tile_clicked(tile: ClickableTile)
 signal tile_hovered(tile: ClickableTile)
 
-func get_size() -> Vector2:
-	# get the size bg node texture
-	var bg_node = $bg
-	if bg_node is Sprite2D:
-		var size = bg_node.texture.get_size()
-		return size
-	return Vector2.ONE
+func set_size(new_size_px: int):
+	size_px = new_size_px
+	var new_scale = (size_px as float) / (get_texture_size() as float)
+	print("new scale: ", new_scale)
+	scale = Vector2(new_scale, new_scale)
+
+# returns texture size as int because the tex is square
+func get_texture_size() -> int:
+	return sprite_node.texture.get_width()
 
 func _on_item_area_input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int):
 	if event.is_action_pressed("left_click"):

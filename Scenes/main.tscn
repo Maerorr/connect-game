@@ -1,17 +1,18 @@
-[gd_scene load_steps=6 format=3 uid="uid://daj2h1j2m5800"]
+[gd_scene load_steps=8 format=3 uid="uid://daj2h1j2m5800"]
 
 [ext_resource type="Script" uid="uid://d4ngyyws870kn" path="res://Scripts/globals/globals.gd" id="2_8gbba"]
 [ext_resource type="Script" uid="uid://fstsemk4f8q0" path="res://Scripts/character.gd" id="2_21xkr"]
 [ext_resource type="Script" uid="uid://hphfnjdctkm0" path="res://Scripts/grid_controller.gd" id="2_bo1nx"]
 [ext_resource type="Script" uid="uid://cveo53w881hv5" path="res://Scripts/map_loader.gd" id="2_jjvhh"]
 [ext_resource type="Texture2D" uid="uid://c7bn460ronj0n" path="res://Sprites/character.png" id="2_kry3j"]
+[ext_resource type="Script" uid="uid://bumu81p1lj8q3" path="res://Scripts/map_objects_manager.gd" id="5_21xkr"]
+[ext_resource type="Script" uid="uid://cnqwakagvqhfb" path="res://Scripts/selection_controller.gd" id="6_6bp64"]
 
 [node name="Node2D" type="Node2D"]
 
 [node name="grid_controller" type="Node2D" parent="."]
 position = Vector2(576, 314)
 script = ExtResource("2_bo1nx")
-tile_size = 80
 
 [node name="character" type="Node2D" parent="grid_controller"]
 z_index = 2
@@ -31,6 +32,14 @@ antialiased = true
 
 [node name="map_loader" type="Node" parent="grid_controller"]
 script = ExtResource("2_jjvhh")
+
+[node name="bg_tiles_parent" type="Node2D" parent="grid_controller"]
+
+[node name="map_objects_manager" type="Node2D" parent="grid_controller"]
+script = ExtResource("5_21xkr")
+
+[node name="selection_controller" type="Node2D" parent="grid_controller"]
+script = ExtResource("6_6bp64")
 
 [node name="globals" type="Node" parent="."]
 script = ExtResource("2_8gbba")

@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://d0amhray4dvkg"]
+
+[ext_resource type="Shader" uid="uid://b0k34mumt4en2" path="res://Shaders/sprite_tint.tres" id="2_pmpdd"]
+[ext_resource type="Texture2D" uid="uid://dkuma8yjkxmlf" path="res://Sprites/rounded_square.png" id="3_fscch"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bo1nx"]
+shader = ExtResource("2_pmpdd")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jjvhh"]
+shader = ExtResource("2_pmpdd")
+
+[node name="clickable_tile" type="Node2D"]
+
+[node name="bg" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_bo1nx")
+instance_shader_parameters/main_tint = Color(0.501961, 0.501961, 0.501961, 1)
+texture = ExtResource("3_fscch")
+
+[node name="foreground" type="Sprite2D" parent="bg"]
+material = SubResource("ShaderMaterial_jjvhh")
+instance_shader_parameters/main_tint = Color(1, 1, 1, 1)
+scale = Vector2(0.885159, 0.885159)
+texture = ExtResource("3_fscch")
