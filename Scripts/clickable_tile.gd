@@ -35,7 +35,6 @@ func get_texture_size() -> int:
 
 func _on_item_area_input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int):
 	if event.is_action_pressed("left_click"):
-		print("Tile clicked at position: ", position_in_grid)
 		tile_clicked.emit(self)
 		return
 	# TODO : right click handle?

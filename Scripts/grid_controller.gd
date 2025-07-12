@@ -22,8 +22,6 @@ var currently_selecting_type: Globals.TILE_TYPE = Globals.TILE_TYPE.EMPTY
 
 
 func _ready():
-	#character.move_completed.connect(_on_character_move_completed)
-	#character.whole_move_completed.connect(_on_character_whole_move_completed)
 	# position itself in the center of the screen
 	global_position = get_viewport_rect().size / 2.0
 	Globals.character = character

@@ -25,7 +25,24 @@ func distance_between_chebyshev(tile_a: ClickableTile, tile_b: ClickableTile) ->
 	return max(abs(tile_a.position_in_grid.x - tile_b.position_in_grid.x), abs(tile_a.position_in_grid.y - tile_b.position_in_grid.y))
 
 func grid_position_world(x: int, y: int) -> Vector2:
+	var full_offset := offset - Vector2(tile_size / 2.0, tile_size / 2.0)
+	full_offset.y += map_size.y * (tile_size + tile_spacing)
 	return Vector2(
 		x * (tile_size + tile_spacing),
 		y * (tile_size + tile_spacing)
-	) - offset + Vector2(tile_size / 2.0, tile_size / 2.0)
+	) - full_offset
+
+func debug_tile_type_to_string(tile_type: TILE_TYPE) -> String:
+	match tile_type:
+		TILE_TYPE.APPLE:
+			return "Ap"
+		TILE_TYPE.PEAR:
+			return "Pe"
+		TILE_TYPE.OBSTACLE:
+			return "Obs"
+		TILE_TYPE.CHARACTER:
+			return "Ch"
+		TILE_TYPE.EMPTY:
+			return "Em"
+		_:
+			return "--"
