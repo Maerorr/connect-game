@@ -1,16 +1,18 @@
-[gd_scene load_steps=4 format=3 uid="uid://cemlj3oklnk2d"]
+[gd_scene load_steps=4 format=3 uid="uid://btbr6u0navvqg"]
 
-[ext_resource type="Script" uid="uid://dqvt54eqx3jac" path="res://Scripts/tiles/clickable_tile.gd" id="1_m65c2"]
-[ext_resource type="Texture2D" uid="uid://d13fqw7s0oo7u" path="res://Sprites/apel.png" id="2_7ke8o"]
+[ext_resource type="Script" uid="uid://ct3oq850t17vd" path="res://Scripts/tiles/selection_type_changing_tile.gd" id="1_1uxa1"]
+[ext_resource type="Texture2D" uid="uid://d13fqw7s0oo7u" path="res://Sprites/apel.png" id="2_meqr5"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jjvhh"]
 size = Vector2(64, 64)
 
 [node name="clickable_tile" type="Node2D"]
-script = ExtResource("1_m65c2")
+script = ExtResource("1_1uxa1")
+new_allowed_types = Array[int]([2])
+metadata/_custom_type_script = "uid://ct3oq850t17vd"
 
 [node name="main_sprite" type="Sprite2D" parent="."]
-texture = ExtResource("2_7ke8o")
+texture = ExtResource("2_meqr5")
 
 [node name="item_area" type="Area2D" parent="."]
 

@@ -1,22 +1,42 @@
 extends Node
 
 ## ENUMS
-enum TILE_TYPE {APPLE, PEAR, OBSTACLE, CHARACTER, EMPTY}
+enum TILE_TYPE {
+	NONE, # representation for selection-changing tile
+	APPLE,
+	PEAR,
+	OBSTACLE,
+	TYPE_CHANGE,
+	CHARACTER,
+	EMPTY
+	}
+
+var SPECIAL_TILE_TYPES: Array[TILE_TYPE] = [
+	TILE_TYPE.TYPE_CHANGE
+]
+
+var REGULAR_TILE_TYPES: Array[TILE_TYPE] = [
+	TILE_TYPE.APPLE,
+	TILE_TYPE.PEAR,
+	TILE_TYPE.EMPTY
+]
 
 ## REFS
 @export var apple_sprite: Texture2D = preload("res://Sprites/apel.png")
 @export var pear_sprite: Texture2D = preload("res://Sprites/pear.png")
 @export var obstacle_sprite: Texture2D = preload("res://Sprites/stone.png")
 @export var character_sprite: Texture2D = preload("res://Sprites/character.png")
+@export var type_change_sprite: Texture2D = preload("res://Sprites/star.png")
 
 ## GLOBAL VARIABLES
 @export var tile_size: int = 64
-@export var tile_spacing: int = 10
+@export var tile_spacing: int = 8
 @export var falling_speed: float = 0.15 # time for a tile to move one tile of distance
 var map_size: Vector2i
 var offset: Vector2
 var character: Character = null
 
+var grid: GridController = null
 
 ## HELPER FUNCTIONS
 # returns chebyshev distance between two tiles (meaning, 8 nearest neighbours are considered as distance of 1)
@@ -44,5 +64,7 @@ func debug_tile_type_to_string(tile_type: TILE_TYPE) -> String:
 			return "Ch"
 		TILE_TYPE.EMPTY:
 			return "Em"
+		TILE_TYPE.TYPE_CHANGE:
+			return "TC"
 		_:
 			return "--"

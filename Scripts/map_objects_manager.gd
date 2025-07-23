@@ -1,7 +1,8 @@
 class_name MapObjectsManager extends Node2D
 
 var object_prefab: PackedScene = preload("res://Prefabs/tile_object.tscn")
-#                 [x][y]
+var type_change_prefab: PackedScene = preload("res://Prefabs/type_change_tile_object.tscn")
+
 var objects: Array[TileObjectArray] = []
 var map_size: Vector2i = Vector2i.ZERO
 var map_data: Array[Globals.TILE_TYPE] = []
@@ -10,6 +11,7 @@ var selection_controller: SelectionController = null
 
 var cooldown: float = 1.0
 var cooldown_timer: float = 0.0
+
 
 func _ready() -> void:
 	selection_controller = get_parent().get_node("selection_controller")
@@ -60,17 +62,22 @@ func setup_map(loaded_map_data: Array[Globals.TILE_TYPE]):
 	for x in range(map_size.x):
 		for y in range(map_size.y):
 			var map_y_idx = y + map_size.y
-			add_and_setup_object(Vector2i(x, map_y_idx), map_data[y + x * map_size.y])
+			add_and_setup_object(Vector2i(x, map_y_idx), map_data[x + y * map_size.x])
 
 
 func add_and_setup_object(position_in_grid: Vector2i, tile_type: Globals.TILE_TYPE):
-	var object_instance: ClickableTile = object_prefab.instantiate()
+	var object_instance#: ClickableTile = object_prefab.instantiate()
+	if tile_type == Globals.TILE_TYPE.TYPE_CHANGE:
+		object_instance = type_change_prefab.instantiate()
+	else:
+		object_instance = object_prefab.instantiate()
 	objects[position_in_grid.x].arr[position_in_grid.y] = object_instance
 	add_child(object_instance)
-	object_instance.position = Globals.grid_position_world(position_in_grid.x, position_in_grid.y)
-	object_instance.set_size(Globals.tile_size)
-	object_instance.set_position_in_grid(position_in_grid)
+	object_instance.set_grid(Globals.grid)
 	object_instance.tile_type = tile_type
+	object_instance.position = Globals.grid_position_world(position_in_grid.x, position_in_grid.y)
+	object_instance.set_size(Globals.tile_size) # this throws because it uses get_texture_size()
+	object_instance.set_position_in_grid(position_in_grid)
 	# connect signals
 
 	object_instance.tile_clicked.connect(selection_controller.on_tile_clicked)
@@ -79,6 +86,7 @@ func add_and_setup_object(position_in_grid: Vector2i, tile_type: Globals.TILE_TY
 	if object_instance.tile_type == Globals.TILE_TYPE.CHARACTER:
 		Globals.character.current_tile = object_instance
 		print("Character tile found at position: ", object_instance.position_in_grid)
+
 
 func get_tile_at(x: int, y: int) -> ClickableTile:
 	return objects[x].arr[y]
@@ -113,9 +121,7 @@ func apply_gravity():
 					empty_spots_below += 1
 			elif empty_spots_below > 0 and tile.tile_type != Globals.TILE_TYPE.CHARACTER:
 				var t = _move_tile(x, y, y + empty_spots_below)
-				print("created a tween")
 				if t != null:
-					print("tween was VALID")
 					tweens.append(t)
 				break
 
@@ -128,7 +134,6 @@ func apply_gravity():
 		var i := 0
 		for f in finished:
 			if tweens[i].is_valid():
-				print("Awaiting tween ", i, " of ", tweens.size())
 				await f
 			i += 1
 		apply_gravity()
@@ -150,7 +155,6 @@ func _move_tile(x: int, from_y: int, to_y: int) -> Tween:
 	var end_pos := destination_tile.global_position
 	var tween := get_tree().create_tween()
 	var time = abs(from_y - to_y) * Globals.falling_speed
-	print("tween time: ", time)
 	tween.set_trans(tween.TRANS_CUBIC)
 	tween.tween_property(tile, "global_position", end_pos, time)
 	

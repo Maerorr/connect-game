@@ -38,6 +38,8 @@ func load_map_from_txt():
 						map_data.append(Globals.TILE_TYPE.EMPTY)
 					'C':
 						map_data.append(Globals.TILE_TYPE.CHARACTER)
+					'S':
+						map_data.append(Globals.TILE_TYPE.TYPE_CHANGE)
 					_:
 						print("Unknown tile type: ", c)
 	file.close()

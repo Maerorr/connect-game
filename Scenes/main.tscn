@@ -1,48 +1,66 @@
-[gd_scene load_steps=8 format=3 uid="uid://daj2h1j2m5800"]
+[gd_scene load_steps=10 format=3 uid="uid://daj2h1j2m5800"]
 
 [ext_resource type="Script" uid="uid://d4ngyyws870kn" path="res://Scripts/globals/globals.gd" id="2_8gbba"]
 [ext_resource type="Script" uid="uid://fstsemk4f8q0" path="res://Scripts/character.gd" id="2_21xkr"]
+[ext_resource type="Texture2D" uid="uid://cy6mfkili1eix" path="res://Sprites/square.png" id="2_344ge"]
 [ext_resource type="Script" uid="uid://hphfnjdctkm0" path="res://Scripts/grid_controller.gd" id="2_bo1nx"]
 [ext_resource type="Script" uid="uid://cveo53w881hv5" path="res://Scripts/map_loader.gd" id="2_jjvhh"]
 [ext_resource type="Texture2D" uid="uid://c7bn460ronj0n" path="res://Sprites/character.png" id="2_kry3j"]
 [ext_resource type="Script" uid="uid://bumu81p1lj8q3" path="res://Scripts/map_objects_manager.gd" id="5_21xkr"]
 [ext_resource type="Script" uid="uid://cnqwakagvqhfb" path="res://Scripts/selection_controller.gd" id="6_6bp64"]
+[ext_resource type="Texture2D" uid="uid://n05vxalqal3i" path="res://Sprites/white_border.png" id="7_ynf5e"]
 
 [node name="Node2D" type="Node2D"]
 
 [node name="grid_controller" type="Node2D" parent="."]
-position = Vector2(576, 314)
+position = Vector2(537, 278)
 script = ExtResource("2_bo1nx")
+character_path = NodePath("map_mask/character")
+line_renderer_path = NodePath("map_mask/line_renderer")
+map_objects_manager_path = NodePath("map_mask/map_objects_manager")
+selection_controller_path = NodePath("map_mask/selection_controller")
 
-[node name="character" type="Node2D" parent="grid_controller"]
+[node name="map_mask" type="Sprite2D" parent="grid_controller"]
+clip_children = 1
+texture = ExtResource("2_344ge")
+region_enabled = true
+region_rect = Rect2(0, 0, 512, 512)
+
+[node name="WhiteBorder" type="Sprite2D" parent="grid_controller/map_mask"]
+modulate = Color(0.290196, 0.588235, 0.65098, 1)
 z_index = 2
-position = Vector2(0, -1)
+scale = Vector2(1.015, 1.015)
+texture = ExtResource("7_ynf5e")
+
+[node name="character" type="Node2D" parent="grid_controller/map_mask"]
+z_index = 2
 script = ExtResource("2_21xkr")
 
-[node name="Sprite2D" type="Sprite2D" parent="grid_controller/character"]
+[node name="Sprite2D" type="Sprite2D" parent="grid_controller/map_mask/character"]
 scale = Vector2(0.117188, 0.117188)
 texture = ExtResource("2_kry3j")
 
-[node name="line_renderer" type="Line2D" parent="grid_controller"]
+[node name="line_renderer" type="Line2D" parent="grid_controller/map_mask"]
 z_index = 1
 width = 20.0
 default_color = Color(0.101961, 0.6, 0, 1)
 round_precision = 10
 antialiased = true
 
+[node name="bg_tiles_parent" type="Node2D" parent="grid_controller/map_mask"]
+
+[node name="map_objects_manager" type="Node2D" parent="grid_controller/map_mask"]
+script = ExtResource("5_21xkr")
+
+[node name="selection_controller" type="Node2D" parent="grid_controller/map_mask"]
+script = ExtResource("6_6bp64")
+
 [node name="map_loader" type="Node" parent="grid_controller"]
 script = ExtResource("2_jjvhh")
 
-[node name="bg_tiles_parent" type="Node2D" parent="grid_controller"]
-
-[node name="map_objects_manager" type="Node2D" parent="grid_controller"]
-script = ExtResource("5_21xkr")
-
-[node name="selection_controller" type="Node2D" parent="grid_controller"]
-script = ExtResource("6_6bp64")
-
 [node name="globals" type="Node" parent="."]
 script = ExtResource("2_8gbba")
+tile_spacing = 10
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -69,5 +87,5 @@ offset_bottom = 324.21
 text = "Reset"
 
 [connection signal="map_loaded" from="grid_controller/map_loader" to="grid_controller" method="_on_map_loader_map_loaded"]
-[connection signal="pressed" from="Control/start_button" to="grid_controller/selection_controller" method="_on_move_button_pressed"]
-[connection signal="pressed" from="Control/reset_button" to="grid_controller/selection_controller" method="_on_reset_button_pressed"]
+[connection signal="pressed" from="Control/start_button" to="grid_controller/map_mask/selection_controller" method="_on_move_button_pressed"]
+[connection signal="pressed" from="Control/reset_button" to="grid_controller/map_mask/selection_controller" method="_on_reset_button_pressed"]
